@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="dynamic(main)">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết phòng</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" th:href="@{/css/hotel_manager.css}">
+</head>
+
+<body>
+  <nav class="row">
+    <div th:replace="/layout/navbar.html"></div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <h1>Khám phá sự thoải mái và nhanh chóng!</h1>
+      <p>Đặt phòng ngay hôm nay để có trải nghiệm tuyệt vời!</p>
+    </div>
+  </header>
+
+  <div class="container mt-4 p-5">
+      <!-- Thông báo lỗi -->
+	    <div th:if="${session.errorMessage}" 
+	     class="alert alert-danger alert-dismissible fade show" 
+	     role="alert" 
+	     id="errorAlert">
+	    <span th:text="${session.errorMessage}"></span>
+	    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+    <!-- Thông báo thành công -->
+   <div th:if="${session.successMessage}" 
+     class="alert alert-success alert-dismissible fade show" 
+     role="alert" 
+     id="successAlert">
+    <span th:text="${session.successMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+  
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page" th:text="'Phòng ' + ${room.roomNumber}">Chi tiết phòng</li>
+      </ol>
+    </nav>
+
+<!-- Thêm script xử lý form và validate -->
+
+    <h1 class="hotel-name mb-2" th:text="${room.roomType.name}">Tên loại phòng</h1>
+    <p class="text-muted mb-4" th:text="'Số phòng: ' + ${room.roomNumber}">Số phòng</p>
+
+    <div class="row room-images">
+      <div class="col-md-6 mb-3">
+        <img th:src="${room.imageUrl}" alt="Room Image" class="img-fluid w-100 main-image">
+      </div>
+      <div class="col-md-3 mb-3">
+        <img th:src="${room.imageUrl2}" alt="Room interior" class="img-fluid w-100 mb-3">
+        <img th:src="${room.imageUrl3}" alt="Bathroom" class="img-fluid w-100">
+      </div>
+      <div class="col-md-3 mb-3">
+        <img th:src="${room.imageUrl4}" alt="View from room" class="img-fluid w-100 h-100 object-fit-cover">
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-8">
+        <h2>Chi tiết về phòng</h2>
+        <p><strong>Trạng thái:</strong>
+          <span th:text="${room.status}" th:class="${room.status == 'Available' ? 'badge bg-success' : 'badge bg-danger'}"></span>
+        </p>
+        <p><strong>Sức chứa:</strong> <span th:text="${room.capacity}"></span></p>
+        <p><strong>Khu vực:</strong> <span th:text="${room.location}"></span></p>
+        <p>Phòng này được thiết kế để mang lại sự thoải mái tối đa cho khách hàng. Với không gian rộng rãi và tiện nghi hiện đại, đây là lựa chọn lý tưởng cho kỳ nghỉ của bạn.</p>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Giá phòng</h3>
+            <p class="price" th:text="${#numbers.formatDecimal(room.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">Giá phòng</p>
+            <button type="button" class="btn btn-primary book-btn w-100" data-bs-toggle="modal" data-bs-target="#bookingModal">
+			        Đặt phòng ngay
+			      </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h5>Tiện ích</h5>
+    <ul>
+      <th:block th:each="amenity : ${amenities}">
+        <li th:text="${amenity.name}">Tên tiện ích</li>
+      </th:block>
+    </ul>
+
+    <a href="/" class="btn btn-outline-primary mt-4">Quay lại danh sách phòng</a>
+  </div>
+
+  <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bookingModalLabel">Đặt phòng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/booking/create" method="post">
+            <input type="hidden" name="roomId" th:value="${room.id}">
+
+            <div class="form-group">
+              <label for="checkIn">Ngày nhận phòng:</label>
+              <input type="date" class="form-control" id="checkIn" name="checkIn" required>
+            </div>
+
+            <div class="form-group">
+              <label for="checkOut">Ngày trả phòng:</label>
+              <input type="date" class="form-control" id="checkOut" name="checkOut" required>
+            </div>
+
+            <div class="form-group">
+              <label for="guests">Số lượng khách:</label>
+              <input type="number" class="form-control" id="guests" name="guests" min="1" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Xác nhận đặt phòng</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div th:replace="/layout/footer.html"></div>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    // Xử lý thông báo lỗi và thành công
+	    const handleAlert = (alertId, removeEndpoint) => {
+	        const alert = document.getElementById(alertId);
+	        if (alert) {
+	            // Tự động ẩn sau 5 giây
+	            const autoCloseTimer = setTimeout(() => {
+	                try {
+	                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+	                    bsAlert.close();
+	                } catch (error) {
+	                    alert.remove(); // Fallback nếu bootstrap alert không hoạt động
+	                }
+	            }, 5000);
+
+	            // Đóng alert khi nhấn nút close
+	            const closeButton = alert.querySelector('.btn-close');
+	            if (closeButton) {
+	                closeButton.addEventListener('click', () => {
+	                    clearTimeout(autoCloseTimer);
+	                });
+	            }
+
+	            // Gửi request xóa session message
+	            fetch(removeEndpoint, { 
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                }
+	            }).catch(error => console.error('Error removing message:', error));
+	        }
+	    };
+
+	    // Xử lý các loại thông báo
+	    handleAlert('errorAlert', '/remove-error-message');
+	    handleAlert('successAlert', '/remove-success-message');
+
+	    // Validate form đặt phòng
+	    const bookingForm = document.querySelector('form[action="/booking/create"]');
+	    if (bookingForm) {
+	        const checkInInput = document.getElementById('checkIn');
+	        const checkOutInput = document.getElementById('checkOut');
+	        const guestsInput = document.getElementById('guests');
+	        
+	        // Lấy số lượng khách tối đa
+	        const maxGuests = parseInt('[[${room.capacity}]]') || 1;
+
+	        // Xử lý input guests
+	        if (guestsInput) {
+	            // Thiết lập giá trị ban đầu
+	            guestsInput.min = 1;
+	            guestsInput.max = maxGuests;
+	            guestsInput.value = 1;  // Mặc định là 1
+
+	            // Xử lý input guests
+	            guestsInput.addEventListener('input', function() {
+	                // Chuyển đổi giá trị thành số nguyên
+	                let value = parseInt(this.value);
+
+	                // Nếu không phải số hoặc nhỏ hơn 1
+	                if (isNaN(value) || value < 1) {
+	                    this.value = 1;
+	                    value = 1;
+	                }
+
+	                // Giới hạn số lượng khách tối đa
+	                if (value > maxGuests) {
+	                    this.value = maxGuests;
+	                }
+	            });
+	        }
+
+	        // Xử lý ngày nhận và trả phòng
+	        if (checkInInput && checkOutInput) {
+	            // Set min date là ngày hôm nay
+	            const today = new Date();
+	            const formattedToday = today.toISOString().split('T')[0];
+	            checkInInput.min = formattedToday;
+	            
+	            // Cập nhật min date của checkout khi checkin thay đổi
+	            checkInInput.addEventListener('change', function() {
+	                const checkInDate = new Date(this.value);
+	                const minCheckOutDate = new Date(checkInDate);
+	                minCheckOutDate.setDate(checkInDate.getDate() + 1);
+	                checkOutInput.min = minCheckOutDate.toISOString().split('T')[0];
+	                
+	                // Reset checkout nếu nhỏ hơn hoặc bằng checkin
+	                if(checkOutInput.value && new Date(checkOutInput.value) <= checkInDate) {
+	                    checkOutInput.value = '';
+	                }
+	            });
+
+	            // Ngăn chọn cùng một ngày
+	            checkOutInput.addEventListener('change', function() {
+	                const checkInDate = new Date(checkInInput.value);
+	                const checkOutDate = new Date(this.value);
+	                
+	                if (checkInDate.getTime() === checkOutDate.getTime()) {
+	                    this.value = ''; // Xóa giá trị checkout
+	                    alert('Ngày nhận phòng và trả phòng không được trùng nhau');
+	                }
+	            });
+	        }
+			
+	        // Kiểm tra đăng nhập trước khi mở modal đặt phòng
+	        const bookBtn = document.querySelector('.book-btn');
+	        const bookingModal = document.getElementById('bookingModal');
+	        
+	        if (bookBtn) {
+	            bookBtn.addEventListener('click', function(event) {
+	                // Kiểm tra trạng thái đăng nhập
+	                fetch('/check-login-status')
+	                    .then(response => response.json())
+	                    .then(data => {
+	                        if (!data.isLoggedIn) {
+	                            // Ngăn chặn mở modal
+	                            event.preventDefault();
+	                            
+	                            // Hiển thị modal đăng nhập hoặc thông báo
+	                            const showLoginAlert = () => {
+	                                const alertContainer = document.getElementById('customAlertContainer') || 
+	                                    (() => {
+	                                        const container = document.createElement('div');
+	                                        container.id = 'customAlertContainer';
+	                                        container.className = 'alert-container';
+	                                        document.body.insertAdjacentElement('afterbegin', container);
+	                                        return container;
+	                                    })();
+	                                
+	                                const alertElement = document.createElement('div');
+	                                alertElement.className = 'alert alert-warning alert-dismissible fade show';
+	                                alertElement.innerHTML = `
+	                                    Vui lòng đăng nhập để đặt phòng
+	                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+	                                    <a href="/login" class="btn btn-primary mt-2">Đăng nhập ngay</a>
+	                                `;
+	                                
+	                                alertContainer.appendChild(alertElement);
+	                                
+	                                // Tự động ẩn sau 5 giây
+	                                setTimeout(() => {
+	                                    try {
+	                                        const bsAlert = new bootstrap.Alert(alertElement);
+	                                        bsAlert.close();
+	                                    } catch {
+	                                        alertElement.remove();
+	                                    }
+	                                }, 5000);
+	                            };
+
+	                            // Hiển thị thông báo
+	                            showLoginAlert();
+	                        }
+	                    })
+	                    .catch(error => {
+	                        console.error('Error checking login status:', error);
+	                    });
+	            });
+	        }
+	        
+	        // Validate form trước khi submit
+	        bookingForm.addEventListener('submit', function(event) {
+	            event.preventDefault();
+	            
+	            // Hàm hiển thị thông báo lỗi tùy chỉnh
+	            const showCustomAlert = (message) => {
+	                const alertContainer = document.getElementById('customAlertContainer') || 
+	                    (() => {
+	                        const container = document.createElement('div');
+	                        container.id = 'customAlertContainer';
+	                        container.className = 'alert-container';
+	                        document.body.insertAdjacentElement('afterbegin', container);
+	                        return container;
+	                    })();
+	                
+	                const alertElement = document.createElement('div');
+	                alertElement.className = 'alert alert-warning alert-dismissible fade show';
+	                alertElement.innerHTML = `
+	                    ${message}
+	                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+	                `;
+	                
+	                alertContainer.appendChild(alertElement);
+	                
+	                // Tự động ẩn sau 3 giây
+	                setTimeout(() => {
+	                    try {
+	                        const bsAlert = new bootstrap.Alert(alertElement);
+	                        bsAlert.close();
+	                    } catch {
+	                        alertElement.remove();
+	                    }
+	                }, 3000);
+	            };
+
+	            // Lấy giá trị input
+	            const today = new Date();
+	            today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để so sánh chính xác
+
+	            // Lấy số lượng khách tối đa
+	            const maxGuests = parseInt('[[${room.capacity}]]') || 1;
+
+	            // Chuyển đổi ngày
+	            const checkInDate = checkInInput ? new Date(checkInInput.value) : null;
+	            const checkOutDate = checkOutInput ? new Date(checkOutInput.value) : null;
+	            const guests = guestsInput ? parseInt(guestsInput.value) : 0;
+
+	            // Validate chi tiết
+	            if (!checkInInput || !checkInInput.value) {
+	                showCustomAlert('Vui lòng chọn ngày nhận phòng');
+	                return;
+	            }
+
+	            if (!checkOutInput || !checkOutInput.value) {
+	                showCustomAlert('Vui lòng chọn ngày trả phòng');
+	                return;
+	            }
+
+	            // Kiểm tra ngày nhận và trả phòng
+	            if (checkInDate.getTime() === checkOutDate.getTime()) {
+	                showCustomAlert('Ngày nhận phòng và trả phòng không được trùng nhau');
+	                return;
+	            }
+
+	            if (checkInDate < today) {
+	                showCustomAlert('Ngày nhận phòng không thể là ngày trong quá khứ');
+	                return;
+	            }
+
+	            if (checkOutDate <= checkInDate) {
+	                showCustomAlert('Ngày trả phòng phải sau ngày nhận phòng');
+	                return;
+	            }
+
+	            if (!guests || guests < 1 || guests > maxGuests) {
+	                showCustomAlert(`Số lượng khách phải từ 1 đến ${maxGuests} người`);
+	                return;
+	            }
+
+	            // Nếu validate pass thì submit form
+	            this.submit();
+	        });
+	    }
+	});
+</script>
+
+	
+</body>
+
+</html>

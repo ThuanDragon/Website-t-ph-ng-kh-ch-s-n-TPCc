@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chi tiết Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto py-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-bold mb-4 text-gray-800">Chi tiết Booking</h1>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Booking ID:</label>
+                <p th:text="${booking.id}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">User:</label>
+                <p th:text="${user.username}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Room:</label>
+                <p th:text="${room.roomNumber}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Room Type:</label>
+                <p th:text="${booking.roomType.name}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Check-in Date:</label>
+                <p th:text="${booking.checkIn}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Check-out Date:</label>
+                <p th:text="${booking.checkOut}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Status:</label>
+                <p th:text="${booking.status}" class="text-gray-600"></p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Guests:</label>
+                <p th:text="${booking.guests}" class="text-gray-600"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-bold">Toltal Price:</label>
+                <span class="text-red-600" th:text="${#numbers.formatDecimal(booking.room.price * (booking.checkOut.toEpochDay() - booking.checkIn.toEpochDay()), 1, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+            </div>
+
+            <div class="flex justify-between mt-6">
+                <a href="/admin/bookings" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded">
+                    Quay lại
+                </a>
+                <div>
+                    <a th:href="@{/admin/bookings/edit/{id}(id=${booking.id})}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2">
+                        Sửa
+                    </a>
+                    <a th:href="@{/admin/bookings/cancel/{id}(id=${booking.id})}" 
+                       onclick="return confirm('Bạn có chắc chắn muốn hủy booking này không?')" 
+                       class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                        Hủy
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

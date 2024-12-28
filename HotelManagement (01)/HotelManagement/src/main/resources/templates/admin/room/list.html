@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý Phòng</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Danh sách Phòng</h2>
+            <button id="addRoomButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-300 flex items-center gap-2">
+                Thêm Phòng
+            </button>
+            <a href="/api/admin" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded no-underline">
+              Trở về Dashboard
+            </a>
+        </div>
+        
+        <div th:if="${successMessage}" class="alert alert-success">
+		    <span th:text="${successMessage}"></span>
+		</div>
+		<div th:if="${errorMessage}" class="alert alert-danger">
+		    <span th:text="${errorMessage}"></span>
+		</div>
+
+        
+        <div class="mb-4">
+          <input type="text" id="searchInput" placeholder="Tìm kiếm theo số phòng..." class="border rounded w-full py-2 px-3 text-gray-700">
+        </div>
+        <!-- Grid Layout for Rooms -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div th:each="room : ${rooms}" class="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-6 border border-gray-200" th:data-room-number="${room.roomNumber}" th:data-room-id="${room.id}">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800" th:text="'Phòng ' + ${room.roomNumber}"></h3>
+                        <span class="inline-block px-3 py-1 mt-2 rounded-full text-sm"
+                              th:class="${room.status == 'Available'} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                              th:text="${room.status}"></span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-500" th:text="'ID: ' + ${room.id}"></span>
+                </div>
+                
+                <img th:src="${room.imageUrl}" alt="Room Image" class="w-full h-48 object-cover rounded-md mb-4" /> 
+                
+                <div class="space-y-3 text-gray-600">
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium">Sức chứa:</span><span th:text="${room.capacity} + ' người'"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium">Vị trí:</span><span th:text="${room.location}"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium">Kiểu phòng:</span><span th:text="${room.roomType.name}"></span>
+                    </div>
+                     <div class="flex items-center gap-2">
+                        <span class="font-medium">Giá:</span><span th:text="${room.price} + ' VNĐ'"></span>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <a th:href="@{/admin/rooms/edit/{id}(id=${room.id})}" class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition duration-300 no-underline">
+                        Sửa
+                    </a>
+                    <button class="delete-room-button inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition duration-300" th:data-room-id="${room.id}">
+                        Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="modal" class="fixed inset-0 flex flex-col justify-center bg-gray-900 bg-opacity-50 overflow-y-auto hidden max-h-[80vh] top-10">
+            <div class="bg-white rounded-lg shadow-lg p-8 w-1/2 max-w-2xl overflow-y-auto"> 
+                <h2 class="text-2xl font-bold mb-4" id="modalTitle">Thêm Phòng</h2>
+                <form th:action="@{/admin/rooms/save}" th:object="${room}" method="post" id="roomForm">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">Số Phòng</label>
+                        <input type="number" th:field="*{roomNumber}" class="border border-gray-300 rounded-lg p-2 w-full" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">Sức Chứa</label>
+                        <input type="number" th:field="*{capacity}" class="border border-gray-300 rounded-lg p-2 w-full" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">Địa Điểm</label>
+                        <input type="text" th:field="*{location}" class="border border-gray-300 rounded-lg p-2 w-full" required />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2" for="roomType">Kiểu phòng: </label>
+                        <select id="roomType" th:field="*{roomType.id}" class="border border-gray-300 rounded-lg p-2 w-full" required>
+                            <option value="" disabled selected>Chọn Room Type</option>
+                            <option th:each="type : ${roomTypes}" th:value="${type.id}" th:text="${type.name}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">Giá</label>
+                        <input type="text" th:field="*{price}" class="border border-gray-300 rounded-lg p-2 w-full" required pattern="^[0-9]+(\.[0-9]{1,2})?$" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">Trạng Thái</label>
+                        <select id="status" th:field="*{status}" class="border border-gray-300 rounded-lg p-2 w-full">
+                            <option th:each="stat : ${status}" th:value="${stat}" th:text="${stat}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+				        <label class="block text-gray-700 font-semibold mb-2">Hình ảnh 1:</label>
+					        <input type="file" name="imageFiles" class="border border-gray-300 rounded-lg p-2 w-full" accept="image/*" required />
+					    </div>
+					
+					    <div class="mb-4">
+					        <label class="block text-gray-700 font-semibold mb-2">Hình ảnh 2:</label>
+					        <input type="file" name="imageFiles" class="border border-gray-300 rounded-lg p-2 w-full" accept="image/*" />
+					    </div>
+					
+					    <div class="mb-4">
+					        <label class="block text-gray-700 font-semibold mb-2">Hình ảnh 3:</label>
+					        <input type="file" name="imageFiles" class="border border-gray-300 rounded-lg p-2 w-full" accept="image/*" />
+					    </div>
+					
+					    <div class="mb-4">
+					        <label class="block text-gray-700 font-semibold mb-2">Hình ảnh 4:</label>
+					        <input type="file" name="imageFiles" class="border border-gray-300 rounded-lg p-2 w-full" accept="image/*" />
+				    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="button" id="closeModalButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg mr-2">Hủy</button>
+                        <button type="submit"  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+             const addRoomButton = document.getElementById('addRoomButton');
+           const closeModalButton = document.getElementById('closeModalButton');
+           const modal = document.getElementById('modal');
+           const form = document.getElementById('roomForm');
+
+           addRoomButton.addEventListener('click', function(){
+            openModal('add')
+            });
+
+           closeModalButton.addEventListener('click', function() {
+                 closeModal()
+            })
+
+         form.addEventListener('submit', function(event) {
+         submitForm(event);
+            });
+         
+        // Event listener for delete buttons using event delegation
+       document.querySelector('.grid').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-room-button')) {
+           const roomId = event.target.getAttribute('data-room-id');
+           confirmDelete(roomId);
+            }
+        });
+    });
+
+        function openModal(mode, roomId) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.querySelector('#modal form'); // Lấy form trong modal
+
+            modalTitle.textContent = mode === 'add' ? 'Thêm Phòng Mới' : 'Chỉnh Sửa Phòng';
+            modal.classList.remove('hidden');
+
+            if (mode === 'edit' && roomId) {
+                loadRoomData(roomId);
+            } else {
+                form.reset(); // Reset form khi thêm phòng mới
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+        }
+
+        function confirmSave() {
+            return confirm("Bạn có chắc chắn muốn lưu thông tin này không?");
+        }
+
+        function loadRoomData(id) {
+            fetch(`/admin/rooms/get/${id}`)
+            .then(response => {
+                // Kiểm tra xem response có phải là JSON không
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new TypeError("Không phải JSON response");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Điền dữ liệu vào form
+                document.querySelector('input[name="id"]').value = data.id;
+                document.querySelector('input[name="roomNumber"]').value = data.roomNumber;
+                document.querySelector('input[name="capacity"]').value = data.capacity;
+                document.querySelector('input[name="location"]').value = data.location;
+                document.querySelector('#roomType').value = data.roomType.id;
+                document.querySelector('input[name="price"]').value = data.price;
+                document.querySelector('#status').value = data.status;
+                document.querySelector('#imageUrl').value = data.imageUrl;
+                // Tương tự cho các trường ảnh khác
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Không thể tải dữ liệu phòng');
+            });
+        }
+
+        function submitForm(event) {
+            event.preventDefault(); 
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            if (!confirmSave()) {
+                return;
+            }
+            
+            fetch(form.action, { 
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new TypeError("Không phải JSON response");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    closeModal();
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            });
+        }
+
+
+            
+        function confirmDelete(roomId) {
+            if (confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+                fetch(`/admin/rooms/delete/${roomId}`, { method: 'DELETE' })
+                .then(response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new TypeError("Không phải JSON response");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const roomElement = document.querySelector(`[data-room-id="${roomId}"]`); 
+                        if (roomElement) {
+                            roomElement.remove();
+                            alert('Xóa phòng thành công');
+                        }
+                    } else {
+                        alert('Lỗi khi xóa phòng: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa phòng');
+                });
+            } else {
+                return false; 
+            }
+        }
+        
+           // Đóng modal khi click bên ngoài
+        window.onclick = function(event) {
+           const modal = document.getElementById('modal');
+           if (event.target === modal) {
+                closeModal();
+            }
+         }
+       const searchInput = document.getElementById('searchInput');
+       searchInput.addEventListener('input', () => {
+           const searchTerm = searchInput.value.toLowerCase();
+           const roomElements = document.querySelectorAll('.grid > div');
+           
+           roomElements.forEach(roomElement => {
+               const roomNumber = roomElement.dataset.roomNumber;
+               
+               if (roomNumber.includes(searchTerm))    {
+                   roomElement.classList.remove('hidden');
+               } else {
+                   roomElement.classList.add('hidden');
+               }
+           })
+       })
+        
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,77 @@
+.login-container {
+    display: flex;
+    height: calc(100vh - 6px); /* Chiều cao toàn bộ cửa sổ trừ đi margin */
+    margin-top: 30px; /* Thêm khoảng cách 3px cho container */
+	margin-bottom: 30px;
+	margin-left: 10px;
+}
+
+.company-name {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/images/loginbackground.png'); /* Đường dẫn đến hình nền */
+    background-size: cover; /* Đảm bảo hình nền phủ kín */
+    position: relative; /* Để sử dụng cho hiệu ứng mờ */
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.company-name::after {
+    content: ""; /* Tạo một phần tử sau */
+    position: absolute;
+    top: 50%; /* Đặt giữa theo chiều dọc */
+    left: 50%; /* Đặt giữa theo chiều ngang */
+    transform: translate(-50%, -50%); /* Giữa chính xác */
+    width: 300px; /* Chiều rộng ô vuông */
+    height: 200px; /* Chiều cao ô vuông */
+    background-color: rgba(255, 255, 255, 0.5); /* Màu mờ đen */
+    border-radius: 10px; /* Bo góc cho ô vuông */
+    z-index: 1; /* Đặt lên trên nền */
+}
+
+.company-name h1 {
+    position: relative; /* Để chữ nổi lên trên ảnh mờ */
+    z-index: 2; /* Đặt lên trên ảnh mờ */
+}
+
+.ptc {
+    color: #007bff; /* Màu xanh cho PTC */
+}
+
+.booking {
+    color: black; /* Màu đen cho Booking */
+}
+
+.login-form {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* Khoảng cách bên trong */
+}
+
+.form-card {
+    width: 100%; /* Chiều rộng của thẻ đăng nhập */
+    max-width: 400px; /* Chiều rộng tối đa */
+    padding: 20px;
+    border: 1px solid #ccc; /* Viền thẻ */
+    border-radius: 10px; /* Bo góc */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Đổ bóng */
+    background-color: white; /* Nền trắng cho thẻ đăng nhập */
+}
+
+.btn-primary {
+    width: 100%; /* Kéo dài nút đến chiều rộng tối đa của thẻ */
+    display: block; /* Đảm bảo nút chiếm toàn bộ chiều rộng */
+    margin: 0 auto; /* Căn giữa nút */
+}
+
+/* Định dạng cho liên kết đăng ký */
+.btn-signup {
+    color: black; /* Màu chữ là đen */
+    text-decoration: none; /* Bỏ gạch chân */
+}

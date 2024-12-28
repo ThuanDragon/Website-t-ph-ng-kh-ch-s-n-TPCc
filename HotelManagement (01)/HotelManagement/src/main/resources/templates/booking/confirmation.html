@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận đặt phòng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-12">
+    <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full space-y-6">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Xác nhận đặt phòng</h2>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+
+        <div class="space-y-4 text-gray-700">
+            <p class="flex justify-between">
+                <span class="font-medium">Khách hàng:</span>
+                <span th:text="${user.username}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Email:</span>
+                <span th:text="${user.email}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Mã đặt phòng:</span>
+                <span th:text="${booking.id}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Số phòng:</span>
+                <span th:text="${room.roomNumber}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Loại phòng:</span>
+                <span th:text="${roomType.name}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Ngày nhận phòng:</span>
+                <span th:text="${booking.checkIn}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Ngày trả phòng:</span>
+                <span th:text="${booking.checkOut}"></span>
+            </p>
+            <p class="flex justify-between">
+                <span class="font-medium">Số lượng khách:</span>
+                <span th:text="${booking.guests}"></span>
+            </p>
+
+            <p class="flex justify-between font-bold text-blue-600">
+                <span>Tổng tiền:</span>
+                <span th:text="${#numbers.formatDecimal(totalPrice, 1, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+            </p>
+        </div>
+
+        <div class="border-t pt-4 text-center">
+            <a href="/" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                Trở về trang chủ
+            </a>
+        </div>
+    </div>
+</body>
+</html>

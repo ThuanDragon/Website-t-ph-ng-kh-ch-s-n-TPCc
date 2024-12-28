@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Booking Statistics</title>
+ <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Hotel Booking Statistics</h1>
+      <a href="/api/admin" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+        Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <div class="bg-blue-100 p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold text-blue-800">Tổng số booking</h3>
+        <p class="text-3xl font-bold text-blue-600" th:text="${totalBookings}">0</p>
+      </div>
+      <div class="bg-green-100 p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold text-green-800">Đã xác nhận</h3>
+        <p class="text-3xl font-bold text-green-600" th:text="${totalConfirmed}">0</p>
+      </div>
+      <div class="bg-yellow-100 p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold text-yellow-800">Đang chờ xử lí</h3>
+        <p class="text-3xl font-bold text-yellow-600" th:text="${totalPending}">0</p>
+      </div>
+      <div class="bg-red-100 p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold text-red-800">Doanh thu dự kiến</h3>
+        <p class="text-3xl font-bold text-red-600" th:text="${#numbers.formatDecimal(totalRevenue, 1, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</p>
+      </div>
+    </div>
+	
+
+	
+    <!-- Filters -->
+    <div class="bg-white p-4 rounded-lg shadow mb-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
+      <form method="GET" action="/admin/statistical" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+	    <div>
+	        <label for="fromDate" class="block text-sm font-medium text-gray-700">Từ Ngày</label>
+	        <input type="date" id="fromDate" name="fromDate" class="mt-1 p-2 border rounded w-full" value="${fromDate}">
+	    </div>
+	    <div>
+	        <label for="toDate" class="block text-sm font-medium text-gray-700">Đến Ngày</label>
+	        <input type="date" id="toDate" name="toDate" class="mt-1 p-2 border rounded w-full" value="${toDate}">
+	    </div>
+	    <div class="col-span-1 md:col-span-4 flex justify-end">
+	        <a href="/api/admin/statistical" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 mr-2 rounded">
+	            Reset Filter
+	        </a>
+	        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded">
+	            Apply Filters
+	        </button>
+	    </div>
+	</form>
+
+    </div>
+
+    <!-- Booking Details Table -->
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Booking Details</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full table-auto border-collapse">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border px-4 py-2 text-left text-gray-600">Username</th>
+              <th class="border px-4 py-2 text-left text-gray-600">Check-in</th>
+              <th class="border px-4 py-2 text-left text-gray-600">Check-out</th>
+              <th class="border px-4 py-2 text-left text-gray-600">Room Type</th>
+              <th class="border px-4 py-2 text-left text-gray-600">Guests</th>
+              <th class="border px-4 py-2 text-left text-gray-600">Total Price</th>
+              <th class="border px-4 py-2 text-left text-gray-600">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Example Data -->
+            <tr th:each="booking : ${confirmedBookings}" class="border-b" th:data-username="${booking.user.username}">
+                <td class="px-4 py-2" th:text="${booking.user.username}"></td>
+                <td class="px-4 py-2" th:text="${booking.checkIn}"></td>
+                <td class="px-4 py-2" th:text="${booking.checkOut}"></td>
+                <td class="px-4 py-2" th:text="${booking.roomType.name}"></td>
+                <td class="px-4 py-2" th:text="${booking.guests}"></td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span th:text="${#numbers.formatDecimal(booking.room.price * (booking.checkOut.toEpochDay() - booking.checkIn.toEpochDay()), 1, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                        </td> 
+              <td class="border px-4 py-2 text-blue-500">Confirmed</td>
+            </tr>
+            <!-- More rows can be dynamically added -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử đặt phòng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-b from-blue-50 to-gray-100 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <h1 class="text-4xl font-extrabold text-center text-blue-600 mb-10 drop-shadow-lg">
+            Lịch sử đặt phòng
+        </h1>
+        
+        <!-- Table -->
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <table class="min-w-full border-collapse border border-gray-200">
+                <thead class="bg-blue-500 text-white">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Mã đặt phòng</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Số phòng</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Loại phòng</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Ngày check-in</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Ngày check-out</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Số lượng khách</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Tổng tiền</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:each="booking : ${bookings}" class="hover:bg-gray-50 transition duration-200">
+                        <td class="px-6 py-4 text-sm text-gray-800 font-medium" th:text="${booking.id}"></td>
+                        <td class="px-6 py-4 text-sm text-gray-800" th:text="${booking.room.roomNumber}"></td>
+                        <td class="px-6 py-4 text-sm text-gray-800" th:text="${booking.roomType.name}"></td>
+                        <td class="px-6 py-4 text-sm text-gray-800" th:text="${booking.checkIn}"></td>
+                        <td class="px-6 py-4 text-sm text-gray-800" th:text="${booking.checkOut}"></td>
+                        <td class="px-6 py-4 text-sm text-gray-800" th:text="${booking.guests}"></td>
+                        <td class="px-6 py-4 text-sm text-gray-800">
+                            <span th:text="${#numbers.formatDecimal(booking.room.price * (booking.checkOut.toEpochDay() - booking.checkIn.toEpochDay()), 1, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                        </td>
+                        <td class="px-6 py-4 text-sm">
+                            <span class="px-2 py-1 rounded-full text-white font-semibold"
+                                  th:classappend="${booking.status == 'Confirmed' ? 'bg-green-500' : 'bg-yellow-500'}"
+                                  th:text="${booking.status}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <a href="/"
+               class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                Trở về trang chủ
+            </a>
+        </div>
+    </div>
+</body>
+</html>

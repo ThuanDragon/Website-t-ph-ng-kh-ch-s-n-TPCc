@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Booking Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto py-8">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Booking Management</h1>
+      <a href="/api/admin" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+        Back to Dashboard
+      </a>
+    </div>
+	<div class="mb-4 pt-3">
+		<input type="text" id="searchInput" placeholder="Tìm kiếm theo Username..." class="border rounded w-full py-2 px-3 text-gray-700">
+	</div>
+		<div class="bg-white p-4 shadow-md rounded-lg mb-6">
+			<h2 class="text-xl font-bold mb-4">Thống kê</h2>
+			
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div class="p-4 bg-blue-100 rounded-lg text-center">
+					<h3 class="text-lg font-semibold">Tổng số Booking</h3>
+					<p class="text-2xl font-bold text-blue-600"
+						th:text="${totalBookings}"></p>
+				</div>
+				<div class="p-4 bg-green-100 rounded-lg text-center">
+					<h3 class="text-lg font-semibold">Đã xác nhận</h3>
+					<p class="text-2xl font-bold text-green-600"
+						th:text="${totalConfirmed}"></p>
+				</div>
+				<div class="p-4 bg-yellow-100 rounded-lg text-center">
+					<h3 class="text-lg font-semibold">Đang chờ xử lý</h3>
+					<p class="text-2xl font-bold text-yellow-600"
+						th:text="${totalPending}"></p>
+				</div>
+				
+			</div>
+			<div class="col-span-1 md:col-span-4 flex justify-end">
+				<a href="/api/admin/statistical" class="inline-block bg-blue-500 text-white font-medium py-2 px-4 rounded-lg mt-4 hover:bg-blue-600">Xem chi tiết</a>
+			</div>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <h2 class="text-lg font-medium bg-gray-200 px-4 py-3">Confirmed Bookings</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full table-auto">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left">Username</th>
+                <th class="px-4 py-3 text-left">Check-in</th>
+                <th class="px-4 py-3 text-left">Check-out</th>
+                <th class="px-4 py-3 text-left">Room Type</th>
+                <th class="px-4 py-3 text-left">Guests</th>
+                <th class="px-4 py-3 text-left">Total Price</th>
+                <th class="px-4 py-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="booking : ${confirmedBookings}" class="border-b" th:data-username="${booking.user.username}">
+                <td class="px-4 py-3" th:text="${booking.user.username}"></td>
+                <td class="px-4 py-3" th:text="${booking.checkIn}"></td>
+                <td class="px-4 py-3" th:text="${booking.checkOut}"></td>
+                <td class="px-4 py-3" th:text="${booking.roomType.name}"></td>
+                <td class="px-4 py-3" th:text="${booking.guests}"></td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span th:text="${#numbers.formatDecimal(booking.room.price * (booking.checkOut.toEpochDay() - booking.checkIn.toEpochDay()), 1, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                        </td>                
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <a th:href="@{/admin/bookings/view/{id}(id=${booking.id})}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">View</a>
+                    <form th:action="@{/admin/bookings/cancel/{id}(id=${booking.id})}" method="post" class="inline">
+                      <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-xs">Cancel</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <h2 class="text-lg font-medium bg-gray-200 px-4 py-3">Pending Bookings</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full table-auto">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left">Username</th>
+                <th class="px-4 py-3 text-left">Check-in</th>
+                <th class="px-4 py-3 text-left">Check-out</th>
+                <th class="px-4 py-3 text-left">Room Type</th>
+                <th class="px-4 py-3 text-left">Guests</th>
+                <th class="px-4 py-3 text-left">Total Price</th>
+                <th class="px-4 py-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="booking : ${pendingBookings}" class="border-b" th:data-username="${booking.user.username}">
+                <td class="px-4 py-3" th:text="${booking.user.username}"></td>
+                <td class="px-4 py-3" th:text="${booking.checkIn}"></td>
+                <td class="px-4 py-3" th:text="${booking.checkOut}"></td>
+                <td class="px-4 py-3" th:text="${booking.roomType.name}"></td>
+                <td class="px-4 py-3" th:text="${booking.guests}"></td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span th:text="${#numbers.formatDecimal(booking.room.price * (booking.checkOut.toEpochDay() - booking.checkIn.toEpochDay()), 1, 'COMMA', 0, 'POINT')} + ' VND'"></span>
+                </td>                
+               <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <a th:href="@{/admin/bookings/view/{id}(id=${booking.id})}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">View</a>
+                    <form th:action="@{/admin/bookings/accept/{id}(id=${booking.id})}" method="post" class="inline" onclick="return confirm('Are you sure?')">
+                      <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">Accept</button>
+                    </form>
+                    <form th:action="@{/admin/bookings/cancel/{id}(id=${booking.id})}" method="post" class="inline" onclick="return confirm('Are you sure?')">
+                      <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-xs">Cancel</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+	  const searchInput = document.getElementById('searchInput');
+	  searchInput.addEventListener('input', () => {
+	    const searchTerm = searchInput.value.toLowerCase();
+	    const bookingRows = document.querySelectorAll('.border-b'); 
+	
+	    bookingRows.forEach(row => {
+	      const username = row.dataset.username.toLowerCase();
+	      if (username.includes(searchTerm)) {
+	        row.classList.remove('hidden');
+	      } else {
+	        row.classList.add('hidden');
+	      }
+	    });
+	  });
+  </script>
+</body>
+</html>

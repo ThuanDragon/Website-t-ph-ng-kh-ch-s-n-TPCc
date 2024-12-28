@@ -1,0 +1,177 @@
+/* Điều chỉnh CSS cho menu và hero section */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: rgba(255,255,255);
+    border-radius: 15px; /* Bo góc menu */
+    padding: 10px 20px;
+    position: absolute; /* Đặt menu bên trong hero section */
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* Đặt menu giữa */
+    z-index: 10;
+    width: 80%; /* Đặt chiều rộng menu */
+}
+
+.hero {
+    background-image: url('/images/anh_bia.png'); /* Đường dẫn đến hình ảnh nền */
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    flex-direction: column; /* Căn giữa theo chiều dọc */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    padding: 10px; /* Thêm khoảng cách trong hero */
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.navbar-nav {
+    flex-grow: 1; /* Cho phép navbar-nav mở rộng để căn giữa logo */
+    justify-content: space-around; /* Căn giữa các nav-item đều nhau */
+    padding-top: 25px;
+}
+
+.navbar-nav .nav-item {
+    display: flex; /* Sử dụng flexbox cho các item */
+    justify-content: space-between; /* Giữa các item */
+    width: 100%; /* Để các item có thể mở rộng toàn bộ chiều rộng của navbar */
+    }
+
+.navbar-nav .nav-item .nav-link {
+    color: #333; /* Màu chữ */
+    text-decoration: none; /* Xóa gạch chân */
+    padding: 0 15px; /* Padding bên trái và bên phải */
+    flex: 1; /* Để các item có thể mở rộng đều nhau */
+    text-align: center; /* Căn giữa chữ trong các item */
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #007bff; /* Màu chữ khi hover */
+}
+
+
+.logo {
+  max-width: 30px;
+  max-height: 60px;
+}
+
+.search-bar {
+    margin-top: 20px; /* Đẩy form tìm kiếm xuống một chút */
+}
+/*Tim kiem */
+
+
+
+/*footer */
+
+.footer {
+            background-color: #1e1e1e;
+            color: white;
+            padding: 2rem 0;
+        }
+        .footer-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .partner-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            background-color: white;
+            border-radius: 10px;
+        }
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .btn-collaborate {
+            background-color: #5bc0de;
+            border: none;
+        }
+/* Căn chỉnh dropdowns (Support, Account) với các mục khác */
+.navbar-nav .dropdown {
+    position: relative;
+    display: flex; /* Flex giúp căn giữa các dropdown */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.navbar-nav .dropdown span {
+    color: #333;
+    padding: 0 15px; /* Giữ padding tương tự như các mục khác */
+    cursor: pointer;
+}
+
+.navbar-nav .dropdown span:hover {
+    color: #007bff; /* Cùng màu hover với các mục khác */
+}
+
+/* Dropdown content */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 12px 0; /* Giữ khoảng cách cho nội dung trong dropdown */
+    margin-bottom: 2px; /* Khoảng cách giữa các mục */
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Dropdown links style */
+.dropdown-content a {
+    color: #333; /* Default link color */
+    text-decoration: none;
+    padding: 10px 15px; /* Đảm bảo có padding */
+    display: block; /* Ensures links are block-level elements */
+}
+
+/* Hover effect for dropdown links */
+.dropdown-content a:hover {
+    color: #007bff; /* Cùng màu hover với các mục khác */
+    background-color: rgba(0, 0, 0, 0.1); /* Optional background hover effect */
+}
+/* CSS cho tin nhắn */
+.message {
+    display: inline-block; 
+    clear: both; 
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    max-width: 80%; 
+}
+
+.message-user {
+    background-color: #DCF8C6; /* Màu nền cho tin nhắn người dùng */
+    float: right; 
+}
+
+.message-bot {
+    background-color: #eee; /* Màu nền cho tin nhắn chatbot */
+    float: left;
+}

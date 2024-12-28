@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý Tin tức</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="container mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">Danh sách Tin tức</h2>
+      
+        <a href="/api/admin" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+		  Trở về Dashboard
+		</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div th:each="news : ${allNews}" class="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-6 border border-gray-200">
+            <div class="flex justify-between items-start mb-4">
+                <b><span class="text-sm font-medium text-gray-500" th:text="'ID: ' + ${news.id}"></span></b>
+            </div>
+			
+			<img th:src="${news.imageUrl}" alt="Room Image" class="w-full h-48 object-cover rounded-md mb-4" /> 
+			
+            <div class="space-y-3 text-gray-600">
+                <div class="flex items-center gap-2">
+                    <b><span th:text="${news.title}"></span></b>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span th:text="${news.content}"></span>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <a th:href="@{/admin/news/edit/{id}(id=${news.id})}" 
+   						class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition duration-300">
+   					Sửa
+				</a>
+                <button th:onclick="'confirmDelete(' + ${news.id} + ')' " 
+				        class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition duration-300">
+				    Xóa
+				</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+</div>
+
+<script>
+function confirmDelete(newsId) {
+    if (confirm("Bạn có chắc chắn muốn xóa tin tức này không?")) {
+        // Gửi yêu cầu DELETE đến API
+        fetch(`/api/admin/news/delete/${newsId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Tin tức đã được xóa thành công.");
+                // Xóa phần tử DOM hiển thị tin tức
+                document.querySelector(`[data-news-id="${newsId}"]`).remove();
+            } else {
+                alert("Có lỗi xảy ra khi xóa tin tức.");
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi:", error);
+            alert("Có lỗi xảy ra khi kết nối đến máy chủ.");
+        });
+    }
+}
+
+</script>
+</body>
+</html>

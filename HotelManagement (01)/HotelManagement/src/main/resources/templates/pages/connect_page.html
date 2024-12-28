@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="dynamic(main)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết nối với PTC</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/home_page.css}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* CSS cho phần bản đồ */
+        .map-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        .map-responsive {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .split-background {
+  			background: linear-gradient(to right, white 80%, rgb(135, 206, 250) 20%);
+		}
+    </style>
+</head>
+<body class="split-background"> 
+    <nav class="row">
+        <div th:replace="/layout/navbar.html"></div>
+    </nav>
+
+    <header class="hero">
+        <div>
+            <h1>Khám phá sự thoải mái và nhanh chóng!</h1>
+            <p>Đặt phòng ngay hôm nay để có trải nghiệm tuyệt vời!</p>
+        </div>
+    </header>
+    <div class="pt-5 ml-10">
+		<div class="flex items-center">
+		  <h1 class="text-3xl font-bold mr-2">Kết nối với</h1>
+			<h1 class="text-3xl font-bold" style="color: rgb(127, 255, 212);">PTC</h1>
+		</div>
+		<h5 class="text-gray-600 mt-2">Chúng tôi rất mong được hợp tác phát triển cùng bạn.</h5>
+	</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5">
+            <div>
+                <form action="/connect" method="POST" class="w-full">
+                    <div class="mb-4">
+                        <label for="hotel-name" class="block text-gray-700 font-bold mb-2">Tên của bạn:</label>
+                        <input type="text" id="hotel-name" name="hotelName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Nhập tên khách sạn">
+                    </div>
+                    <div class="mb-4">
+                        <label for="phone" class="block text-gray-700 font-bold mb-2">SĐT liên lạc:</label>
+                        <input type="tel" id="phone" name="phone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Nhập số điện thoại">
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 font-bold mb-2">Email liên lạc:</label>
+                        <input type="email" id="email" name="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Nhập email">
+                    </div>
+                    <div class="mb-4">
+                        <label for="ideas" class="block text-gray-700 font-bold mb-2">Let's talk about your ideas:</label>
+                        <textarea id="ideas" name="ideas" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="5" placeholder="Chia sẻ ý tưởng của bạn"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="checkbox" id="nda" name="nda" class="mr-2">
+                        <label for="nda" class="text-gray-700">I want to protect my data by signing an NDA</label>
+                    </div>
+                    <div class="flex items-center justify-center">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">SUBMIT</button>
+                    </div>
+                </form>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3918.444162251331!2d106.6260403!3d10.8537829!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752b6c59ba4c97%3A0x535e784068f1558b!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1729957088072!5m2!1svi!2s" 
+                        class="map-responsive" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </div>
+		<div class="flex items-center space-x-4 text-lg p-5"> 
+		  <div>
+		    <i class="fas fa-phone"></i>
+		    <span class="ml-2 text-red-500">111 111 111</span>
+		  </div>
+		  <div>
+		    <i class="fas fa-envelope"></i>
+		    <span class="ml-2 text-red-500">info@company.com</span>
+		  </div>
+		</div>
+    <footer>	
+        <div th:replace="/layout/footer.html"></div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+</body>
+</html>

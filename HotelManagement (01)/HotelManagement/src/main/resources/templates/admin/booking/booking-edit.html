@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chỉnh sửa Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const bookingForm = document.querySelector('form[action="/admin/bookings/edit/{id}"]');
+        if (bookingForm) {
+            const checkInInput = document.getElementById('checkIn');
+            const checkOutInput = document.getElementById('checkOut');
+            const guestsInput = document.getElementById('guests');
+
+            // Lấy số lượng khách tối đa từ room
+            const maxGuests = (room && room.capacity) ? parseInt('[[${room.capacity}]]') : 1; // Đảm bảo room không null
+
+            // Xử lý input guests
+            if (guestsInput) {
+                // Thiết lập giá trị ban đầu
+                guestsInput.min = 1;
+                guestsInput.max = maxGuests;
+                guestsInput.value = Math.min(parseInt(guestsInput.value) || 1, maxGuests); // Mặc định là giá trị hiện tại hoặc 1
+
+                // Xử lý input guests
+                guestsInput.addEventListener('input', function() {
+                    let value = parseInt(this.value);
+
+                    if (isNaN(value) || value < 1) {
+                        this.value = 1;
+                    } else if (value > maxGuests) {
+                        this.value = maxGuests;
+                    }
+                });
+            }
+
+            // Xử lý ngày nhận và trả phòng
+            if (checkInInput && checkOutInput) {
+                const today = new Date();
+                const formattedToday = today.toISOString().split('T')[0];
+                checkInInput.min = formattedToday;
+
+                checkInInput.addEventListener('change', function() {
+                    const checkInDate = new Date(this.value);
+                    const minCheckOutDate = new Date(checkInDate);
+                    minCheckOutDate.setDate(checkInDate.getDate() + 1);
+                    checkOutInput.min = minCheckOutDate.toISOString().split('T')[0];
+
+                    if (checkOutInput.value && new Date(checkOutInput.value) <= checkInDate) {
+                        checkOutInput.value = '';
+                    }
+                });
+
+                checkOutInput.addEventListener('change', function() {
+                    const checkInDate = new Date(checkInInput.value);
+                    const checkOutDate = new Date(this.value);
+
+                    if (checkInDate.getTime() === checkOutDate.getTime()) {
+                        this.value = '';
+                        alert('Ngày nhận phòng và trả phòng không được trùng nhau');
+                    }
+                });
+            }
+        }
+    });
+
+    function validateForm(event) {
+        const checkIn = document.getElementById("checkIn").value;
+        const checkOut = document.getElementById("checkOut").value;
+        const guests = document.getElementById("guests").value;
+
+        document.getElementById("error").innerHTML = "";
+
+        let errors = [];
+
+        if (!checkIn) {
+            errors.push("Ngày check-in là bắt buộc.");
+        }
+
+        if (!checkOut) {
+            errors.push("Ngày check-out là bắt buộc.");
+        } else if (checkIn && new Date(checkIn) >= new Date(checkOut)) {
+            errors.push("Ngày check-out phải sau ngày check-in.");
+        }
+
+        if (!guests || guests <= 0) {
+            errors.push("Số lượng khách phải lớn hơn 0.");
+        }
+
+        const maxGuests = parseInt('[[${room.capacity}]]'); // Lấy số lượng tối đa từ room.capacity
+        if (guests > maxGuests) {
+            errors.push("Số lượng khách không được vượt quá sức chứa của phòng (" + maxGuests + " khách).");
+        }
+
+        if (errors.length > 0) {
+            event.preventDefault(); 
+            document.getElementById("error").innerHTML = errors.join("<br>");
+        }
+    }
+</script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+    <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">Chỉnh sửa Booking</h1>
+
+        <div id="error" class="text-red-500 mb-4"></div>
+        <div th:if="${param.success}" class="text-green-500 mb-4">[[${param.success}]]</div>
+        <div th:if="${param.error}" class="text-red-500 mb-4">[[${param.error}]]</div>
+
+        <form th:action="@{/admin/bookings/edit/{id}(id=${booking.id})}" th:method="post" onsubmit="validateForm(event)">
+            <div class="mb-4">
+                <label for="checkIn" class="block text-gray-700 font-medium">Ngày Check-In:</label>
+                <input type="date" id="checkIn" name="checkIn" th:value="${booking.checkIn}" 
+                       class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300">
+            </div>
+
+            <div class="mb-4">
+                <label for="checkOut" class="block text-gray-700 font-medium">Ngày Check-Out:</label>
+                <input type="date" id="checkOut" name="checkOut" th:value="${booking.checkOut}" 
+                       class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300">
+            </div>
+
+            <div class="mb-4">
+                <label for="guests" class="block text-gray-700 font-medium">Số lượng khách:</label>
+                <input type="number" id="guests" name="guests" th:value="${booking.guests}" 
+                       class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300" 
+                       min="1" required>
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <a th:href="@{/admin/bookings}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Hủy</a>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Lưu</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
